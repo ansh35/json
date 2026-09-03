@@ -33,7 +33,7 @@ JSON-IQ utilizes a modern, serverless architecture optimized for edge deployment
 - **Framework**: **Next.js 16 (App Router)** powering both the frontend React client and the backend API routes.
 - **State Management**: React Hooks (`useState`, `useRef`, `useTransition`) heavily optimized with debouncing and query-caching to prevent API thrashing.
 - **Editor Engine**: **Monaco Editor** (the engine behind VS Code) embedded directly in the browser via `@monaco-editor/react`, utilizing Web Workers for syntax highlighting.
-- **AI Integration**: The **Groq SDK** connects directly to the `llama-3.1-8b-instant` model. The backend acts as a secure proxy to inject system prompts and shield the API key.
+- **AI Integration**: The **Groq SDK** connects to `llama-3.3-70b-versatile` (or configured `GROQ_MODEL`). The backend acts as a secure proxy to inject system prompts and shield the API key.
 - **Styling**: **Tailwind CSS v4** powering a bespoke design system featuring glassmorphism (`backdrop-blur`), absolute layout positioning, and highly responsive grid systems.
 - **Icons & UI**: **Lucide React** for lightweight SVG icons and **Shadcn UI** for core primitive elements.
 

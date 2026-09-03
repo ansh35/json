@@ -49,13 +49,41 @@ JSON String:
 ${jsonString}`;
     }
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "llama-3.1-8b-instant",
-      temperature: 0.1,
-    });
+    const candidateModels = [
+      ...(process.env.GROQ_MODEL ? [process.env.GROQ_MODEL] : []),
+      "openai/gpt-oss-20b",
+      "qwen/qwen3.6-27b",
+      "llama-3.3-70b-versatile",
+      "llama-3.1-8b-instant",
+      "gemma2-9b-it",
+    ];
 
-    const response = chatCompletion.choices[0]?.message?.content || "No insights generated.";
+    let response = "";
+    let lastError: unknown = null;
+
+    for (const model of candidateModels) {
+      try {
+        const chatCompletion = await groq.chat.completions.create({
+          messages: [{ role: "user", content: prompt }],
+          model: model,
+          temperature: 0.1,
+        });
+        response = chatCompletion.choices[0]?.message?.content || "No insights generated.";
+        lastError = null;
+        break;
+      } catch (err: unknown) {
+        lastError = err;
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes("model_not_found") || msg.includes("does not exist") || msg.includes("404")) {
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    if (lastError && !response) {
+      throw lastError;
+    }
 
     return NextResponse.json({ result: response });
 
